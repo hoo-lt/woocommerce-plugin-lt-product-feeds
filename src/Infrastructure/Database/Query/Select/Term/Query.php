@@ -3,19 +3,21 @@
 namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\Term;
 
 use Hoo\WordPressPluginFramework\Database\Query\Select\QueryInterface;
+use Hoo\WordPressPluginFramework\Database\Query\QueryException;
 use Hoo\ProductFeeds\Domain;
 use wpdb;
 
-class Query implements QueryInterface
+readonly class Query implements QueryInterface
 {
-	protected readonly string $query;
+	protected string $query;
 
 	public function __construct(
-		protected readonly wpdb $wpdb,
-		protected readonly string $path = __DIR__,
-		protected readonly Domain\Taxonomy $taxonomy,
+		protected wpdb $wpdb,
+		protected Domain\Taxonomy $taxonomy,
 	) {
-		$this->initialize();
+		$this->query = $this->query(
+			$this->path(),
+		);
 	}
 
 	public function __invoke(): string
@@ -25,14 +27,19 @@ class Query implements QueryInterface
 		]);
 	}
 
-	protected function initialize(): void
+	protected function path(): string
 	{
-		$path = "{$this->path}/Query.sql";
+		$path = __DIR__ . '/Query.sql';
 		if (!file_exists($path)) {
-			//throw exception
+			throw new QueryException('.sql file not found');
 		}
 
-		$this->query = strtr(file_get_contents($path), [
+		return $path;
+	}
+
+	protected function query(string $path): string
+	{
+		return strtr(file_get_contents($path), [
 			':term_taxonomy' => $this->wpdb->term_taxonomy,
 			':terms' => $this->wpdb->terms,
 		]);

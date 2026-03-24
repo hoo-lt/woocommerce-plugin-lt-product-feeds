@@ -1,4 +1,4 @@
-WITH cte_posts AS (
+WITH cte_products AS (
 	SELECT
 		posts.ID AS id,
 		posts.post_title AS name,
@@ -16,61 +16,72 @@ WITH cte_posts AS (
 		AND terms.slug = 'simple'
 
 	WHERE posts.post_type = 'product'
-		AND posts.post_status = 'publish'
-		:AND posts.ID IN ()
+		:AND posts.post_status
+		:AND posts.ID
 ),
 
 cte_term_taxonomy AS (
 	SELECT
-		cte_posts.id AS post_id,
+		cte_products.id AS product_id,
 		term_taxonomy.term_taxonomy_id,
 		term_taxonomy.term_id,
 		term_taxonomy.taxonomy
 
-	FROM cte_posts
+	FROM cte_products
 
-	STRAIGHT_JOIN :term_relationships AS term_relationships
-		ON term_relationships.object_id = cte_posts.id
-	STRAIGHT_JOIN :term_taxonomy AS term_taxonomy
+	JOIN :term_relationships AS term_relationships
+		ON term_relationships.object_id = cte_products.id
+	JOIN :term_taxonomy AS term_taxonomy
 		ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
 )
 
 SELECT
-	cte_posts.id,
-	cte_posts.name,
-	CONCAT(%s, '/', %s, '/', cte_posts.slug, '/') AS url,
+	cte_products.id,
+	cte_products.name,
+	cte_products.slug AS path,
+
 	price.meta_value AS price,
 	stock.meta_value AS stock,
-	gtin.meta_value AS gtin,
+	global_unique_id.meta_value AS global_unique_id,
 
 	brand.term_taxonomy_id AS brand_id,
 	category.term_taxonomy_id AS category_id,
+	tag.term_taxonomy_id AS tag_id,
 
-	attribute.taxonomy AS attribute_taxonomy,
+	product_attributes.meta_value AS product_attributes,
+
+	attribute.taxonomy AS attribute_slug,
 	attribute.term_id AS term_id
 
-FROM cte_posts
+FROM cte_products
 
 JOIN :postmeta AS price
-	ON price.post_id = cte_posts.id
+	ON price.post_id = cte_products.id
 	AND price.meta_key = '_price'
 
 LEFT JOIN :postmeta AS stock
-	ON stock.post_id = cte_posts.id
+	ON stock.post_id = cte_products.id
 	AND stock.meta_key = '_stock'
-LEFT JOIN :postmeta AS gtin
-	ON gtin.post_id = cte_posts.id
-	AND gtin.meta_key = '_global_unique_id'
+LEFT JOIN :postmeta AS global_unique_id
+	ON global_unique_id.post_id = cte_products.id
+	AND global_unique_id.meta_key = '_global_unique_id'
 
 LEFT JOIN cte_term_taxonomy AS brand
-	ON brand.post_id = cte_posts.id
+	ON brand.product_id = cte_products.id
 	AND brand.taxonomy = 'product_brand'
 LEFT JOIN cte_term_taxonomy AS category
-	ON category.post_id = cte_posts.id
+	ON category.product_id = cte_products.id
 	AND category.taxonomy = 'product_cat'
+LEFT JOIN cte_term_taxonomy AS tag
+	ON tag.product_id = cte_products.id
+	AND tag.taxonomy = 'product_tag'
+
+LEFT JOIN :postmeta AS product_attributes
+	ON product_attributes.post_id = cte_products.id
+	AND product_attributes.meta_key = '_product_attributes'
 
 LEFT JOIN cte_term_taxonomy AS attribute
-	ON attribute.post_id = cte_posts.id
+	ON attribute.product_id = cte_products.id
 	AND attribute.taxonomy NOT IN (
 		'product_brand',
 		'product_cat',

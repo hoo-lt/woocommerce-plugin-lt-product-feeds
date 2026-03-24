@@ -3,9 +3,9 @@
 use Hoo\WordPressPluginFramework;
 use Hoo\WooCommercePluginFramework;
 
-use Hoo\ProductFeeds\Presentation;
 use Hoo\ProductFeeds\Domain;
 use Hoo\ProductFeeds\Infrastructure;
+use Hoo\ProductFeeds\Presentation;
 
 $containerBuilder = new DI\ContainerBuilder();
 $containerBuilder->addDefinitions([
@@ -30,27 +30,43 @@ $containerBuilder->addDefinitions([
 	/**
 	 * Repositories
 	 */
-	Domain\Repository\Attribute\RepositoryInterface::class => DI\get(Infrastructure\Repository\Attribute\Repository::class),
-	Domain\Repository\Brand\RepositoryInterface::class => DI\get(Infrastructure\Repository\Brand\Repository::class),
-	Domain\Repository\Category\RepositoryInterface::class => DI\get(Infrastructure\Repository\Category\Repository::class),
-	Domain\Repository\Product\RepositoryInterface::class => DI\get(Infrastructure\Repository\Product\Repository::class),
-	Domain\Repository\Term\RepositoryInterface::class => DI\get(Infrastructure\Repository\Term\Repository::class),
-	Domain\Repository\TermMeta\RepositoryInterface::class => DI\get(Infrastructure\Repository\TermMeta\Repository::class),
-
+	//Domain\Repository\Attribute\RepositoryInterface::class => DI\get(Infrastructure\Repository\Attribute\Repository::class),
 	Domain\Repository\Brand\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Brand\Repository::class)
-		->constructorParameter('selectTermQuery', DI\create(Infrastructure\Database\Query\Select\Term\Query::class)
-			->constructorParameter('taxonomy', Domain\Taxonomy::Brand)),
-
+		->constructorParameter(
+			'selectTermQuery',
+			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+				->constructorParameter(
+					'taxonomy',
+					Domain\Taxonomy::Brand
+				)
+		),
 	Domain\Repository\Category\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Category\Repository::class)
-		->constructorParameter('selectTermQuery', DI\create(Infrastructure\Database\Query\Select\Term\Query::class)
-			->constructorParameter('taxonomy', Domain\Taxonomy::Category)),
-
+		->constructorParameter(
+			'selectTermQuery',
+			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+				->constructorParameter(
+					'taxonomy',
+					Domain\Taxonomy::Category
+				)
+		),
+	Domain\Repository\Product\RepositoryInterface::class => DI\get(Infrastructure\Repository\Product\Repository::class),
 	Domain\Repository\Tag\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Tag\Repository::class)
-		->constructorParameter('selectTermQuery', DI\create(Infrastructure\Database\Query\Select\Term\Query::class)
-			->constructorParameter('taxonomy', Domain\Taxonomy::Tag)),
+		->constructorParameter(
+			'selectTermQuery',
+			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+				->constructorParameter(
+					'taxonomy',
+					Domain\Taxonomy::Tag
+				)
+		),
+	Domain\Repository\TermMeta\RepositoryInterface::class => DI\get(Infrastructure\Repository\TermMeta\Repository::class),
+	Domain\Repository\TermRelationship\RepositoryInterface::class => DI\get(Infrastructure\Repository\TermRelationship\Repository::class),
 
 	Infrastructure\Database\Query\Select\TermRelationship\Query::class => DI\autowire()
-		->constructorParameter('termMeta', Domain\TermMeta::Excluded),
+		->constructorParameter(
+			'termMeta',
+			Domain\TermMeta::Excluded
+		),
 
 	/**
 	 * Mappers
@@ -68,9 +84,10 @@ $containerBuilder->addDefinitions([
 		->constructorParameter('url', site_url())
 		->constructorParameter('path', '/' . ltrim(get_option('woocommerce_permalinks')['tag_base'], '/') ?? ''),
 
-		/**
-		 * Hooks
-		 */
+	/**
+	 * Hooks
+	 */
+	/*
 	Infrastructure\Hook\Action\Hook::class => DI\factory(function (DI\Container $container) {
 		$pipeline = $container->get(WordPressPluginFramework\Pipeline\PipelineInterface::class);
 		$feedPresenters = array_map($container->get(...), [
@@ -85,16 +102,19 @@ $containerBuilder->addDefinitions([
 			...$feedPresenters
 		);
 	}),
+	*/
 
 	/**
 	 * Controllers
 	 */
+	/*
 	Presentation\Mapper\Feed\Kaina24Lt\Mapper::class => DI\autowire()
 		->constructorParameter('utmSource', 'kaina24.lt')
 		->constructorParameter('utmMedium', 'ppc'),
 
 	Presentation\Presenters\Feed\Kaina24Lt\Presenter::class => DI\autowire()
 		->constructorParameter('path', 'kaina24-lt.xml'),
+	*/
 
 	/**
 	 * WordPress

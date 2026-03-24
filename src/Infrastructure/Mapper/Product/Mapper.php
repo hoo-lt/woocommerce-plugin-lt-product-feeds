@@ -27,12 +27,13 @@ class Mapper
 			'path' => $path,
 			'price' => $price,
 			'stock' => $stock,
-			'gtin' => $gtin,
-			'attribute_taxonomy' => $attributeTaxonomy,
+			'global_unique_id' => $globalUniqueId,
+			'product_attributes' => $productAttributes,
+			'attribute_slug' => $attributeSlug,
 			'term_id' => $termId,
 			'brand_id' => $brandId,
 			'category_id' => $categoryId,
-			//'tag_id' => $tagId,
+			'tag_id' => $tagId,
 		]) {
 			$id = new Domain\Products\Product\Id(
 				$id,
@@ -47,13 +48,55 @@ class Mapper
 					$this->url->withPath("{$this->url->path()}/{$path}"),
 					$price,
 					$stock,
-					$gtin,
+					$globalUniqueId,
 				);
 				$products->add($product);
 			}
 
-			if ($attributeTaxonomy) {
-				$attributeSlug = strtr($attributeTaxonomy, [
+			if ($productAttributes) {
+				foreach (unserialize($productAttributes) as [
+					'name' => $name,
+					'value' => $value,
+					'is_taxonomy' => $isTaxonomy,
+				]) {
+					if ($isTaxonomy) {
+						continue;
+					}
+
+					$attributeName = new Domain\Products\Product\Attributes\Attribute\Name(
+						$name,
+					);
+
+					if ($product->attributes->has($attributeName)) {
+						$attribute = $product->attributes->get($attributeName);
+					} else {
+						$attribute = new Domain\Products\Product\Attributes\Attribute(
+							$attributeName
+						);
+
+						$product->attributes->add($attribute);
+					}
+
+					if ($value) {
+						foreach (explode('|', $value) as $name) {
+							$termName = new Domain\Products\Product\Attributes\Attribute\Terms\Term\Name(
+								trim($name),
+							);
+
+							if (!$attribute->terms->has($termName)) {
+								$term = new Domain\Products\Product\Attributes\Attribute\Terms\Term(
+									$termName,
+								);
+
+								$attribute->terms->add($term);
+							}
+						}
+					}
+				}
+			}
+
+			if ($attributeSlug) {
+				$attributeSlug = strtr($attributeSlug, [
 					'pa_' => '',
 				]);
 
@@ -98,19 +141,15 @@ class Mapper
 				}
 			}
 
-			/*
 			if ($tagId) {
-				$tagId = new Domain\Products\Product\Tags\Tag\Id(
+				$tagId = new Domain\Products\Product\TagIds\TagId(
 					$tagId,
 				);
 
-				if (!$product->tags->has($tagId)) {
-					$product->tags->add(new Domain\Products\Product\Tags\Tag(
-						$tagId,
-					));
+				if (!$product->tagIds->has($tagId)) {
+					$product->tagIds->add($tagId);
 				}
 			}
-			*/
 		}
 
 		return $products;

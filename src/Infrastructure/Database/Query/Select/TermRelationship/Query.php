@@ -2,20 +2,18 @@
 
 namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\TermRelationship;
 
-use Hoo\ProductFeeds\Domain;
 use Hoo\WordPressPluginFramework\Database\Query\QueryException;
 use Hoo\WordPressPluginFramework\Database\Query\Select\QueryInterface;
-
+use Hoo\ProductFeeds\Domain;
 use wpdb;
 
-class Query implements QueryInterface
+readonly class Query implements QueryInterface
 {
-	protected readonly string $query;
+	protected string $query;
 
 	public function __construct(
-		protected readonly wpdb $wpdb,
-		protected readonly string $path = __DIR__,
-		protected readonly Domain\TermMeta $termMeta,
+		protected wpdb $wpdb,
+		protected Domain\TermMeta $termMeta,
 	) {
 		$this->query = $this->query(
 			$this->path(),
@@ -32,7 +30,7 @@ class Query implements QueryInterface
 
 	protected function path(): string
 	{
-		$path = "{$this->path}/Query.sql";
+		$path = __DIR__ . '/Query.sql';
 		if (!file_exists($path)) {
 			throw new QueryException('.sql file not found');
 		}
