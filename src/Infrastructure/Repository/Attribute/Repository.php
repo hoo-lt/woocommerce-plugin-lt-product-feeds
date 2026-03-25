@@ -6,12 +6,12 @@ use Hoo\WordPressPluginFramework\Database\DatabaseInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure;
 
-class Repository implements Domain\Repository\Attribute\RepositoryInterface
+readonly class Repository implements Domain\Repository\Attribute\RepositoryInterface
 {
 	public function __construct(
-		protected readonly DatabaseInterface $database,
-		protected readonly Infrastructure\Database\Query\Select\Attribute\Query $selectAttributeQuery,
-		protected readonly Infrastructure\Mapper\Attribute\Mapper $attributeMapper,
+		protected DatabaseInterface $database,
+		protected Infrastructure\Database\Query\Select\Attribute\Query $selectAttributeQuery,
+		protected Infrastructure\Mapper\Attribute\Mapper $attributeMapper,
 	) {
 	}
 
