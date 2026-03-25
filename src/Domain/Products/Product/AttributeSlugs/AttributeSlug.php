@@ -6,12 +6,12 @@ use Hoo\WordPressPluginFramework\Collection;
 
 readonly class AttributeSlug implements Collection\Item\ItemInterface, Collection\Item\Key\KeyInterface
 {
-	public AttributeSlug\TermIds $termIds;
+	public AttributeSlug\TermSlugs $termSlugs;
 
 	public function __construct(
 		protected string $slug,
 	) {
-		$this->termIds = new AttributeSlug\TermIds();
+		$this->termSlugs = new AttributeSlug\TermSlugs();
 	}
 
 	public function __invoke(): string

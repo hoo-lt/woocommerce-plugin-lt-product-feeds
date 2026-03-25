@@ -4,7 +4,7 @@ namespace Hoo\ProductFeeds\Infrastructure\Repository\TermMeta;
 
 use Hoo\ProductFeeds\Domain;
 
-class Repository implements Domain\Repository\TermMeta\RepositoryInterface
+readonly class Repository implements Domain\Repository\TermMeta\RepositoryInterface
 {
 	public function get(int $id): Domain\TermMeta
 	{

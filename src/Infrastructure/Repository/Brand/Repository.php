@@ -6,12 +6,12 @@ use Hoo\WordPressPluginFramework\Database\DatabaseInterface;
 use Hoo\ProductFeeds\Domain;
 use Hoo\ProductFeeds\Infrastructure;
 
-class Repository implements Domain\Repository\Brand\RepositoryInterface
+readonly class Repository implements Domain\Repository\Brand\RepositoryInterface
 {
 	public function __construct(
-		protected readonly DatabaseInterface $database,
-		protected readonly Infrastructure\Database\Query\Select\Term\Query $selectTermQuery,
-		protected readonly Infrastructure\Mapper\Brand\Mapper $brandMapper,
+		protected DatabaseInterface $database,
+		protected Infrastructure\Database\Query\Select\Term\Query $selectTermQuery,
+		protected Infrastructure\Mapper\Brand\Mapper $brandMapper,
 	) {
 	}
 

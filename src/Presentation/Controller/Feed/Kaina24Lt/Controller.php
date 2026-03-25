@@ -13,7 +13,6 @@ class Controller implements Presentation\Controller\Feed\ControllerInterface
 		protected readonly Domain\Repository\Brand\RepositoryInterface $brandRepository,
 		protected readonly Domain\Repository\Category\RepositoryInterface $categoryRepository,
 		protected readonly Domain\Repository\Product\RepositoryInterface $productRepository,
-		protected readonly Domain\Repository\Term\RepositoryInterface $termRepository,
 		protected readonly Presentation\Mapper\Feed\MapperInterface $mapper,
 		protected readonly string $path,
 	) {

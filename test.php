@@ -13,6 +13,6 @@ define('WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 require_once __DIR__ . '/container.php';
 
-$productRepository = $container->get(Domain\Repository\Product\RepositoryInterface::class);
+$repository = $container->get(Infrastructure\Repository\Attribute\Repository::class);
 
-print_r($productRepository->all());
+print_r($repository->all());

@@ -6,10 +6,13 @@ use Hoo\WordPressPluginFramework\Collection;
 
 class Attribute implements Collection\Item\ItemInterface
 {
+	public Attribute\Terms $terms;
+
 	public function __construct(
 		protected readonly Attribute\Slug $slug,
 		public string $name,
 	) {
+		$this->terms = new Attribute\Terms();
 	}
 
 	public function slug(): string

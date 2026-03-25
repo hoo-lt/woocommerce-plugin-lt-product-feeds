@@ -11,21 +11,40 @@ class Mapper
 		$attributes = new Domain\Attributes();
 
 		foreach ($table as [
-			'name' => $name,
-			'slug' => $slug,
+			'attribute_name' => $attributeName,
+			'attribute_slug' => $attributeSlug,
+			'term_name' => $termName,
+			'term_slug' => $termSlug,
 		]) {
-			$slug = new Domain\Attributes\Attribute\Slug(
-				$slug
+			$attributeSlug = new Domain\Attributes\Attribute\Slug(
+				$attributeSlug,
 			);
 
-			if ($attributes->has($slug)) {
-				continue;
+			if ($attributes->has($attributeSlug)) {
+				$attribute = $attributes->get($attributeSlug);
+			} else {
+				$attribute = new Domain\Attributes\Attribute(
+					$attributeSlug,
+					$attributeName,
+				);
+
+				$attributes->add($attribute);
 			}
 
-			$attributes->add(new Domain\Attributes\Attribute(
-				$slug,
-				$name,
-			));
+			$termSlug = new Domain\Attributes\Attribute\Terms\Term\Slug(
+				$termSlug,
+			);
+
+			if ($attribute->terms->has($attributeSlug)) {
+				$term = $attribute->terms->get($attributeSlug);
+			} else {
+				$term = new Domain\Attributes\Attribute\Terms\Term(
+					$termSlug,
+					$termName,
+				);
+
+				$attribute->terms->add($term);
+			}
 		}
 
 		return $attributes;

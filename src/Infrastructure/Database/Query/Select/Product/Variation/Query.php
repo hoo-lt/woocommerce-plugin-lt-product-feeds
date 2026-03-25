@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\Product\Simple;
+namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\Product\Variation;
 
 use Hoo\WordPressPluginFramework\Database\Query\Select\QueryInterface;
 use Hoo\WordPressPluginFramework\Database\Query\QueryException;
@@ -15,6 +15,8 @@ readonly class Query implements QueryInterface
 		protected wpdb $wpdb,
 		protected array $ids = [],
 		protected array $statuses = [],
+		protected array $parentIds = [],
+		protected array $parentStatuses = [],
 	) {
 		$this->query = $this->query(
 			$this->path(),
@@ -27,6 +29,8 @@ readonly class Query implements QueryInterface
 			$this->wpdb,
 			$ids,
 			$this->statuses,
+			$this->parentIds,
+			$this->parentStatuses
 		);
 	}
 
@@ -36,6 +40,30 @@ readonly class Query implements QueryInterface
 			$this->wpdb,
 			$this->ids,
 			$statuses,
+			$this->parentIds,
+			$this->parentStatuses
+		);
+	}
+
+	public function withParentIds(int ...$parentIds): self
+	{
+		return new self(
+			$this->wpdb,
+			$this->ids,
+			$this->statuses,
+			$parentIds,
+			$this->parentStatuses
+		);
+	}
+
+	public function withParentStatuses(Domain\Post\Status ...$parentStatuses): self
+	{
+		return new self(
+			$this->wpdb,
+			$this->ids,
+			$this->statuses,
+			$this->parentIds,
+			$parentStatuses
 		);
 	}
 
@@ -44,9 +72,13 @@ readonly class Query implements QueryInterface
 		return $this->wpdb->prepare(strtr($this->query, [
 			':AND posts.ID' => $this->ids ? 'AND posts.ID IN (' . implode(',', array_map(fn() => '%d', $this->ids)) . ')' : '',
 			':AND posts.post_status' => $this->statuses ? 'AND posts.post_status IN (' . implode(',', array_map(fn() => '%s', $this->statuses)) . ')' : '',
+			':AND parent_posts.ID' => $this->parentIds ? 'AND parent_posts.ID IN (' . implode(',', array_map(fn() => '%d', $this->parentIds)) . ')' : '',
+			':AND parent_posts.post_status' => $this->parentStatuses ? 'AND parent_posts.post_status IN (' . implode(',', array_map(fn() => '%s', $this->parentStatuses)) . ')' : '',
 		]), [
 			...$this->ids,
 			...array_map(fn($status) => $status->value, $this->statuses),
+			...$this->parentIds,
+			...array_map(fn($parentStatus) => $parentStatus->value, $this->parentStatuses),
 		]);
 	}
 

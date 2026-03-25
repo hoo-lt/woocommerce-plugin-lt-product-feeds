@@ -4,30 +4,30 @@ namespace Hoo\ProductFeeds\Domain\Products\Product\AttributeSlugs\AttributeSlug;
 
 use Hoo\WordPressPluginFramework\Collection;
 
-class TermIds extends Collection\AbstractCollection
+class TermSlugs extends Collection\AbstractCollection
 {
 	public function __construct(
-		TermIds\TermId ...$items,
+		TermSlugs\TermSlug ...$items,
 	) {
 		$this->items = $items;
 	}
 
-	public function get(Collection\Item\Key\KeyInterface $key): ?TermIds\TermId
+	public function get(Collection\Item\Key\KeyInterface $key): ?TermSlugs\TermSlug
 	{
 		return parent::get($key);
 	}
 
-	public function first(): ?TermIds\TermId
+	public function first(): ?TermSlugs\TermSlug
 	{
 		return parent::first();
 	}
 
-	public function last(): ?TermIds\TermId
+	public function last(): ?TermSlugs\TermSlug
 	{
 		return parent::last();
 	}
 
-	public function add(TermIds\TermId $item): void
+	public function add(TermSlugs\TermSlug $item): void
 	{
 		$key = $item->key();
 		if ($this->has($key)) {

@@ -30,7 +30,7 @@ class Mapper
 			'global_unique_id' => $globalUniqueId,
 			'product_attributes' => $productAttributes,
 			'attribute_slug' => $attributeSlug,
-			'term_id' => $termId,
+			'term_slug' => $termSlug,
 			'brand_id' => $brandId,
 			'category_id' => $categoryId,
 			'tag_id' => $tagId,
@@ -53,6 +53,7 @@ class Mapper
 				$products->add($product);
 			}
 
+			/*
 			if ($productAttributes) {
 				foreach (unserialize($productAttributes) as [
 					'name' => $name,
@@ -94,12 +95,9 @@ class Mapper
 					}
 				}
 			}
+			*/
 
 			if ($attributeSlug) {
-				$attributeSlug = strtr($attributeSlug, [
-					'pa_' => '',
-				]);
-
 				$attributeSlug = new Domain\Products\Product\AttributeSlugs\AttributeSlug(
 					$attributeSlug,
 				);
@@ -110,13 +108,13 @@ class Mapper
 					$product->attributeSlugs->add($attributeSlug);
 				}
 
-				if ($termId) {
-					$termId = new Domain\Products\Product\AttributeSlugs\AttributeSlug\TermIds\TermId(
-						$termId,
+				if ($termSlug) {
+					$termSlug = new Domain\Products\Product\AttributeSlugs\AttributeSlug\TermSlugs\TermSlug(
+						$termSlug,
 					);
 
-					if (!$attributeSlug->termIds->has($termId)) {
-						$attributeSlug->termIds->add($termId);
+					if (!$attributeSlug->termSlugs->has($termSlug)) {
+						$attributeSlug->termSlugs->add($termSlug);
 					}
 				}
 			}
