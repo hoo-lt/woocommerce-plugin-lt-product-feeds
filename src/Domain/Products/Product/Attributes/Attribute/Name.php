@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Domain\Products\Product\Attributes\Attribute;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Domain\Products\Product\Attributes\Attribute;
 
 use Hoo\WordPressPluginFramework\Collection;
 

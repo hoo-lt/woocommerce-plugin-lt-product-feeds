@@ -1,8 +1,8 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Mapper\Term;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Mapper\Term;
 
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 
 class Mapper
 {

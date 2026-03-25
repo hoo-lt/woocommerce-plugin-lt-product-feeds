@@ -1,8 +1,8 @@
 <?php
 
-namespace Hoo\ProductFeeds\Presentation\Mapper\TermMeta;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Presentation\Mapper\TermMeta;
 
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 
 class Mapper
 {

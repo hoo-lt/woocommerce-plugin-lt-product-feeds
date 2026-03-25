@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Domain\Post;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Domain\Post;
 
 enum Status: string
 {

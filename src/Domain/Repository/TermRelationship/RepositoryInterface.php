@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Domain\Repository\TermRelationship;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Domain\Repository\TermRelationship;
 
 interface RepositoryInterface
 {

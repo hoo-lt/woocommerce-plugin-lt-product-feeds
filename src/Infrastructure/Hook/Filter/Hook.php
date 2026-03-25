@@ -1,11 +1,11 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Hook\Filter;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Hook\Filter;
 
 use Hoo\WordPressPluginFramework\Middleware;
 use Hoo\WordPressPluginFramework\Pipeline\PipelineInterface;
-use Hoo\ProductFeeds\Domain;
-use Hoo\ProductFeeds\Presentation;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Presentation;
 use WP_Term;
 
 class Hook

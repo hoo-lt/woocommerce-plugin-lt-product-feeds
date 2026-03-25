@@ -1,8 +1,8 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Mapper\Attribute;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Mapper\Attribute;
 
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 
 class Mapper
 {

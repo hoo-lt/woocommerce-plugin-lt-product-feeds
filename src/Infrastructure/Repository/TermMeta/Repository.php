@@ -1,8 +1,8 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Repository\TermMeta;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Repository\TermMeta;
 
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 
 readonly class Repository implements Domain\Repository\TermMeta\RepositoryInterface
 {

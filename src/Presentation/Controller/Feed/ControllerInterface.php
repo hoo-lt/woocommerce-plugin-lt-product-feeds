@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Presentation\Controller\Feed;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Presentation\Controller\Feed;
 
 use Hoo\WordPressPluginFramework\Http;
 

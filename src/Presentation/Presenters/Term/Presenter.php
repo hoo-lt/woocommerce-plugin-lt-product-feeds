@@ -1,11 +1,11 @@
 <?php
 
-namespace Hoo\ProductFeeds\Presentation\Presenters\Term;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Presentation\Presenters\Term;
 
 use Hoo\WordPressPluginFramework\Http\RequestInterface;
 use Hoo\WordPressPluginFramework\View\ViewInterface;
-use Hoo\ProductFeeds\Domain;
-use Hoo\ProductFeeds\Presentation;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Presentation;
 
 class Presenter
 {

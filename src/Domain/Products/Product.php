@@ -1,6 +1,6 @@
 <?php
 
-namespace Hoo\ProductFeeds\Domain\Products;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Domain\Products;
 
 use Hoo\WordPressPluginFramework\Collection;
 use Hoo\WordPressPluginFramework\Http;

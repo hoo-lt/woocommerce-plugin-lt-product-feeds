@@ -1,10 +1,10 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\Term;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Database\Query\Select\Term;
 
 use Hoo\WordPressPluginFramework\Database\Query\Select\QueryInterface;
 use Hoo\WordPressPluginFramework\Database\Query\QueryException;
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 use wpdb;
 
 readonly class Query implements QueryInterface

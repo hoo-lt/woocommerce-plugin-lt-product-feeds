@@ -3,9 +3,9 @@
 use Hoo\WordPressPluginFramework;
 use Hoo\WooCommercePluginFramework;
 
-use Hoo\ProductFeeds\Domain;
-use Hoo\ProductFeeds\Infrastructure;
-use Hoo\ProductFeeds\Presentation;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Infrastructure;
+use Hoo\WordPressPlugin\LtProductFeeds\Presentation;
 
 $containerBuilder = new DI\ContainerBuilder();
 $containerBuilder->addDefinitions([
@@ -30,7 +30,7 @@ $containerBuilder->addDefinitions([
 	/**
 	 * Repositories
 	 */
-	//Domain\Repository\Attribute\RepositoryInterface::class => DI\get(Infrastructure\Repository\Attribute\Repository::class),
+	Domain\Repository\Attribute\RepositoryInterface::class => DI\get(Infrastructure\Repository\Attribute\Repository::class),
 	Domain\Repository\Brand\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Brand\Repository::class)
 		->constructorParameter(
 			'selectTermQuery',

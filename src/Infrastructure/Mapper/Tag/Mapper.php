@@ -1,9 +1,9 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Mapper\Tag;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Mapper\Tag;
 
 use Hoo\WordPressPluginFramework\Http;
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 
 class Mapper
 {

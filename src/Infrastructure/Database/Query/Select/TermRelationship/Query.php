@@ -1,10 +1,10 @@
 <?php
 
-namespace Hoo\ProductFeeds\Infrastructure\Database\Query\Select\TermRelationship;
+namespace Hoo\WordPressPlugin\LtProductFeeds\Infrastructure\Database\Query\Select\TermRelationship;
 
 use Hoo\WordPressPluginFramework\Database\Query\QueryException;
 use Hoo\WordPressPluginFramework\Database\Query\Select\QueryInterface;
-use Hoo\ProductFeeds\Domain;
+use Hoo\WordPressPlugin\LtProductFeeds\Domain;
 use wpdb;
 
 readonly class Query implements QueryInterface
