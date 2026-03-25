@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "139582c8bd2a2079d33bf1ee72df2519",
+    "content-hash": "7c874782bfcbed549aff9d31e18e3d24",
     "packages": [
         {
             "name": "hoo-lt/woocommerce-plugin-framework",

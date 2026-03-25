@@ -1,10 +1,10 @@
 {
-	"name": "hoo-lt/woocommerce-product-feeds",
+	"name": "hoo-lt/woocommerce-plugin-lt-product-feeds",
 	"type": "project",
 	"license": "GPL-3.0",
 	"autoload": {
 		"psr-4": {
-			"Hoo\\ProductFeeds\\": "src/"
+			"Hoo\\WooCommercePlugin\\LtProductFeeds\\": "src/"
 		}
 	},
 	"authors": [

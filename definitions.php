@@ -7,8 +7,7 @@ use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure;
 use Hoo\WooCommercePlugin\LtProductFeeds\Presentation;
 
-$containerBuilder = new DI\ContainerBuilder();
-$containerBuilder->addDefinitions([
+return [
 		/**
 		 * WordPress Plugin Framework
 		 */
@@ -16,11 +15,20 @@ $containerBuilder->addDefinitions([
 	WordPressPluginFramework\Database\DatabaseInterface::class => DI\get(WordPressPluginFramework\Database\Database::class),
 	WordPressPluginFramework\Pipeline\PipelineInterface::class => DI\get(WordPressPluginFramework\Pipeline\Pipeline::class),
 	WordPressPluginFramework\View\ViewInterface::class => DI\autowire(WordPressPluginFramework\View\View::class)
-		->constructorParameter('path', WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH . '/src/Presentation/View'),
+		->constructorParameter(
+			'path',
+			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH . '/src/Presentation/View'
+		),
 	WordPressPluginFramework\Logger\LoggerInterface::class => DI\autowire(WooCommercePluginFramework\Logger\Logger::class)
-		->constructorParameter('source', 'product-feeds'),
+		->constructorParameter(
+			'source',
+			'product-feeds'
+		),
 	WordPressPluginFramework\Middleware\VerifyNonce\Middleware::class => DI\autowire()
-		->constructorParameter('nonceName', 'product_feeds_nonce'),
+		->constructorParameter(
+			'nonceName',
+			'product_feeds_nonce'
+		),
 
 	WordPressPluginFramework\Http\RequestInterface::class => DI\factory(fn() => new WordPressPluginFramework\Http\Request(
 		$_GET,
@@ -154,6 +162,4 @@ $containerBuilder->addDefinitions([
 	WC_Logger_Interface::class => DI\factory(fn() => wc_get_logger()),
 
 	XMLWriter::class => DI\factory(fn() => new XMLWriter()),
-]);
-
-$container = $containerBuilder->build();
+];
