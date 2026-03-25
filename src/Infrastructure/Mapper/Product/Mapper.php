@@ -39,9 +39,9 @@ class Mapper
 			$id = new Domain\Products\Product\Id(
 				$id,
 			);
-			$parentId = new Domain\Products\Product\Id(
+			$parentId = $parentId ? new Domain\Products\Product\Id(
 				$parentId,
-			);
+			) : null;
 
 			if ($products->has($id)) {
 				$product = $products->get($id);
