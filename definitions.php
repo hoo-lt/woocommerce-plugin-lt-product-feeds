@@ -13,6 +13,7 @@ return [
 		 */
 	WordPressPluginFramework\Cache\CacheInterface::class => DI\get(WordPressPluginFramework\Cache\Cache::class),
 	WordPressPluginFramework\Database\DatabaseInterface::class => DI\get(WordPressPluginFramework\Database\Database::class),
+	WordPressPluginFramework\Json\JsonInterface::class => DI\get(WordPressPluginFramework\Json\Json::class),
 	WordPressPluginFramework\Pipeline\PipelineInterface::class => DI\get(WordPressPluginFramework\Pipeline\Pipeline::class),
 	WordPressPluginFramework\View\ViewInterface::class => DI\autowire(WordPressPluginFramework\View\View::class)
 		->constructorParameter(
