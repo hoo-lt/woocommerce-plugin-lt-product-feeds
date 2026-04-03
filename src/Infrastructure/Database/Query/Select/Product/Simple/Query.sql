@@ -1,4 +1,4 @@
-WITH cte_posts AS (
+WITH posts AS (
 	SELECT
 		posts.ID AS id,
 		posts.post_title AS name,
@@ -20,9 +20,9 @@ WITH cte_posts AS (
 		:AND posts.post_status
 ),
 
-cte_term_ids AS (
+term_ids AS (
 	SELECT
-		cte_posts.id AS post_id,
+		posts.id AS post_id,
 		term_taxonomy.taxonomy,
 		COALESCE(
 			JSON_ARRAYAGG(
@@ -31,10 +31,10 @@ cte_term_ids AS (
 			JSON_ARRAY()
 		) AS term_ids
 
-	FROM cte_posts
+	FROM posts
 
 	JOIN :term_relationships AS term_relationships
-		ON term_relationships.object_id = cte_posts.id
+		ON term_relationships.object_id = posts.id
 	JOIN :term_taxonomy AS term_taxonomy
 		ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
 
@@ -46,10 +46,10 @@ cte_term_ids AS (
 
 	GROUP BY
 		post_id,
-		taxonomy
+		term_taxonomy.taxonomy
 ),
 
-cte_taxonomy_attributes AS (
+attributes AS (
 	SELECT
 		post_id,
 		COALESCE(
@@ -60,11 +60,16 @@ cte_taxonomy_attributes AS (
 				)
 			),
 			JSON_ARRAY()
-		) AS taxonomy_attributes
+		) AS attributes
+
 	FROM (
 		SELECT
-			cte_posts.id AS post_id,
-			TRIM(LEADING 'pa_' FROM term_taxonomy.taxonomy) AS slug,
+			posts.id AS post_id,
+			TRIM(
+				LEADING 'pa_'
+
+				FROM term_taxonomy.taxonomy
+			) AS slug,
 			COALESCE(
 				JSON_ARRAYAGG(
 					JSON_OBJECT('slug', terms.slug)
@@ -72,10 +77,10 @@ cte_taxonomy_attributes AS (
 				JSON_ARRAY()
 			) AS terms
 
-		FROM cte_posts
+		FROM posts
 
 		JOIN :term_relationships AS term_relationships
-			ON term_relationships.object_id = cte_posts.id
+			ON term_relationships.object_id = posts.id
 		JOIN :term_taxonomy AS term_taxonomy
 			ON term_taxonomy.term_taxonomy_id = term_relationships.term_taxonomy_id
 		JOIN :terms AS terms
@@ -85,16 +90,16 @@ cte_taxonomy_attributes AS (
 
 		GROUP BY
 			post_id,
-			taxonomy
-	) AS taxonomy_attributes
+			term_taxonomy.taxonomy
+	) AS terms
 
 	GROUP BY
 		post_id
 ),
 
-cte_postmeta AS (
+postmeta AS (
 	SELECT
-		cte_posts.id AS post_id,
+		posts.id AS post_id,
 		CAST(MAX(CASE WHEN meta_key = '_regular_price' THEN meta_value END) AS DECIMAL(10,2)) AS regular_price,
 		CAST(MAX(CASE WHEN meta_key = '_sale_price' THEN meta_value END) AS DECIMAL(10,2)) AS sale_price,
 		CAST(NULLIF(MAX(CASE WHEN meta_key = '_sale_price_dates_from' THEN meta_value END), '0') AS UNSIGNED) AS sale_price_dates_from,
@@ -104,12 +109,12 @@ cte_postmeta AS (
 		MAX(CASE WHEN meta_key = '_global_unique_id' THEN meta_value END) AS global_unique_id,
 		MAX(CASE WHEN meta_key = '_product_attributes' THEN meta_value END) AS product_attributes,
 		CAST(NULLIF(MAX(CASE WHEN meta_key = '_thumbnail_id' THEN meta_value END), '') AS UNSIGNED) AS thumbnail_id,
-		NULLIF(MAX(CASE WHEN meta_key = '_product_image_gallery' THEN meta_value END), '') AS image_gallery
+		NULLIF(MAX(CASE WHEN meta_key = '_product_image_gallery' THEN meta_value END), '') AS product_image_gallery
 
 	FROM :postmeta
 
-	JOIN cte_posts
-		ON cte_posts.id = post_id
+	JOIN posts
+		ON posts.id = post_id
 
 	WHERE meta_key IN (
 			'_regular_price',
@@ -129,60 +134,76 @@ cte_postmeta AS (
 )
 
 SELECT
- COALESCE(JSON_ARRAYAGG(
- JSON_OBJECT(
- 'id', id,
- 'name', name,
- 'path', path,
- 'regular_price', regular_price,
- 'sale_price', sale_price,
- 'sale_price_dates_from', sale_price_dates_from,
- 'sale_price_dates_to', sale_price_dates_to,
- 'stock', stock,
- 'stock_status', stock_status,
- 'thumbnail_id', thumbnail_id,
- 'image_gallery', image_gallery,
- 'global_unique_id', global_unique_id,
- 'product_attributes', product_attributes,
- 'brand_ids', brand_ids,
- 'category_ids', category_ids,
- 'tag_ids', tag_ids,
- 'taxonomy_attributes', taxonomy_attributes
- )
- ), JSON_ARRAY()) AS products
+	COALESCE(
+		JSON_ARRAYAGG(
+			JSON_OBJECT(
+				'id', id,
+				'name', name,
+				'path', path,
+				'regular_price', regular_price,
+				'sale_price', sale_price,
+				'sale_price_dates_from', sale_price_dates_from,
+				'sale_price_dates_to', sale_price_dates_to,
+				'stock', stock,
+				'stock_status', stock_status,
+				'thumbnail_id', thumbnail_id,
+				'product_image_gallery', product_image_gallery,
+				'global_unique_id', global_unique_id,
+				'product_attributes', product_attributes,
+				'brand_ids', brand_ids,
+				'category_ids', category_ids,
+				'tag_ids', tag_ids,
+				'attributes', attributes
+			)
+		),
+		JSON_ARRAY()
+	) AS products
+
 FROM (
- SELECT
- cte_posts.id,
- cte_posts.name,
- cte_posts.slug AS path,
- meta.regular_price,
- meta.sale_price,
- meta.sale_price_dates_from,
- meta.sale_price_dates_to,
- meta.stock,
- meta.stock_status,
- meta.thumbnail_id,
- meta.image_gallery,
- meta.global_unique_id,
- meta.product_attributes,
- COALESCE(brands.term_ids, JSON_ARRAY()) AS brand_ids,
- COALESCE(categories.term_ids, JSON_ARRAY()) AS category_ids,
- COALESCE(tags.term_ids, JSON_ARRAY()) AS tag_ids,
- COALESCE(cte_taxonomy_attributes.taxonomy_attributes, JSON_ARRAY()) AS taxonomy_attributes
+	SELECT
+		posts.id,
+		posts.name,
+		posts.slug AS path,
+		COALESCE(
+			brand_ids.term_ids,
+			JSON_ARRAY()
+		) AS brand_ids,
+		COALESCE(
+			category_ids.term_ids,
+			JSON_ARRAY()
+		) AS category_ids,
+		COALESCE(
+			tag_ids.term_ids,
+			JSON_ARRAY()
+		) AS tag_ids,
+		COALESCE(
+			attributes.attributes,
+			JSON_ARRAY()
+		) AS attributes,
+		postmeta.regular_price,
+		postmeta.sale_price,
+		postmeta.sale_price_dates_from,
+		postmeta.sale_price_dates_to,
+		postmeta.stock,
+		postmeta.stock_status,
+		postmeta.thumbnail_id,
+		postmeta.product_image_gallery,
+		postmeta.global_unique_id,
+		postmeta.product_attributes
 
- FROM cte_posts
- LEFT JOIN cte_postmeta AS meta
- ON meta.post_id = cte_posts.id
+	FROM posts
 
- LEFT JOIN cte_term_ids AS brands
- ON brands.post_id = cte_posts.id
- AND brands.taxonomy = 'product_brand'
- LEFT JOIN cte_term_ids AS categories
- ON categories.post_id = cte_posts.id
- AND categories.taxonomy = 'product_cat'
- LEFT JOIN cte_term_ids AS tags
- ON tags.post_id = cte_posts.id
- AND tags.taxonomy = 'product_tag'
- LEFT JOIN cte_taxonomy_attributes
- ON cte_taxonomy_attributes.post_id = cte_posts.id
-) AS json;
+	LEFT JOIN term_ids AS brand_ids
+		ON brand_ids.post_id = posts.id
+		AND brand_ids.taxonomy = 'product_brand'
+	LEFT JOIN term_ids AS category_ids
+		ON category_ids.post_id = posts.id
+		AND category_ids.taxonomy = 'product_cat'
+	LEFT JOIN term_ids AS tag_ids
+		ON tag_ids.post_id = posts.id
+		AND tag_ids.taxonomy = 'product_tag'
+	LEFT JOIN attributes
+		ON attributes.post_id = posts.id
+	LEFT JOIN postmeta
+		ON postmeta.post_id = posts.id
+) AS json
