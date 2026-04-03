@@ -26,12 +26,7 @@ define('WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 
 require __DIR__ . '/vendor/autoload.php';
 
-$definitions = require __DIR__ . '/definitions.php';
-
-$containerBuilder = new DI\ContainerBuilder();
-$containerBuilder->addDefinitions($definitions);
-
-$container = $containerBuilder->build();
+$container = require __DIR__ . '/container.php';
 
 /*
 $actionHook = $container->get(Infrastructure\Hook\Action\Hook::class);
