@@ -1,8 +1,8 @@
 <?php
 
-namespace Hoo\WooCommercePlugin\LtProductFeeds\Domain\Products\Product;
+namespace Hoo\WooCommercePlugin\LtProductFeeds\Domain\Products\Product\Stock;
 
-enum StockStatus: string
+enum Status: string
 {
 	case InStock = 'instock';
 	case OutOfStock = 'outofstock';

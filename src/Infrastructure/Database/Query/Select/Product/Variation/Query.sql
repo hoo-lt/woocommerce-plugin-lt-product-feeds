@@ -380,8 +380,10 @@ FROM (
 		postmeta.sale_price,
 		postmeta.sale_price_dates_from,
 		postmeta.sale_price_dates_to,
-		postmeta.global_unique_id,
-		parent_postmeta.global_unique_id AS parent_global_unique_id,
+		COALESCE(
+			postmeta.global_unique_id,
+			parent_postmeta.global_unique_id
+		) AS global_unique_id,
 		postmeta.stock,
 		parent_postmeta.stock AS parent_stock,
 		postmeta.stock_status,

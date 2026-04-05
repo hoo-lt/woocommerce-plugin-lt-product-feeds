@@ -20,9 +20,8 @@ readonly class Product implements Collection\Item\ItemInterface
 		public string $name,
 		public Http\UrlInterface $url,
 		public Product\Price $price,
-		public ?int $stock,
-		public Product\StockStatus $stockStatus,
-		public ?string $gtin,
+		public Product\Stock $stock,
+		public Product\Gtin $gtin,
 	) {
 		$this->imageIds = new Product\ImageIds();
 		$this->attributes = new Product\Attributes();
