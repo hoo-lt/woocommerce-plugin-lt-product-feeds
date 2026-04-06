@@ -365,8 +365,8 @@ FROM (
 		COALESCE(
 			NULLIF(posts.short_description, ''),
 			NULLIF(posts.description, ''),
-			posts.parent_short_description,
-			posts.parent_description
+			NULLIF(posts.parent_short_description),
+			NULLIF(posts.parent_description)
 		) AS description,
 		posts.slug,
 		posts.status,

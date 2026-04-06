@@ -262,8 +262,8 @@ FROM (
 		posts.id,
 		posts.name,
 		COALESCE(
-			posts.short_description,
-			posts.description
+			NULLIF(posts.short_description, ''),
+			NULLIF(posts.description, ''),
 		) AS description,
 		posts.slug,
 		posts.status,

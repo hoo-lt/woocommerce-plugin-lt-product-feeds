@@ -34,7 +34,7 @@ readonly class Query implements QueryInterface
 		);
 	}
 
-	public function withStatuses(Domain\Post\Status ...$statuses): self
+	public function withStatuses(Domain\Products\Product\Status ...$statuses): self
 	{
 		return new self(
 			$this->wpdb,
@@ -56,7 +56,7 @@ readonly class Query implements QueryInterface
 		);
 	}
 
-	public function withParentStatuses(Domain\Post\Status ...$parentStatuses): self
+	public function withParentStatuses(Domain\Products\Product\Status ...$parentStatuses): self
 	{
 		return new self(
 			$this->wpdb,

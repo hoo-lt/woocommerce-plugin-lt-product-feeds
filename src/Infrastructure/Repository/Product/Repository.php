@@ -9,31 +9,66 @@ use Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure;
 readonly class Repository implements Domain\Repository\Product\RepositoryInterface
 {
 	public function __construct(
-		protected Domain\Repository\TermRelationship\RepositoryInterface $termRelationshipRepository,
 		protected DatabaseInterface $database,
 		protected Infrastructure\Database\Query\Select\Product\Simple\Query $selectSimpleProductQuery,
-		protected Infrastructure\Database\Query\Select\Product\Variation\Query $selectVariationProductQuery,
-		protected Infrastructure\Mapper\Product\Mapper $productMapper,
+		protected Infrastructure\Mapper\Product\Simple\Mapper $simpleProductMapper,
+		protected Infrastructure\Database\Query\Select\Product\Variation\Query $selectProductVariationQuery,
+		protected Infrastructure\Mapper\Product\Variation\Mapper $productVariationMapper,
+		protected array $ids = [],
+		protected array $statuses = [],
 	) {
+	}
+
+	public function withIds(int ...$ids): self
+	{
+		return new self(
+			$this->database,
+			$this->selectSimpleProductQuery,
+			$this->simpleProductMapper,
+			$this->selectProductVariationQuery,
+			$this->productVariationMapper,
+			$ids,
+			$this->statuses
+		);
+	}
+
+	public function withStatuses(Domain\Products\Product\Status ...$statuses): self
+	{
+		return new self(
+			$this->database,
+			$this->selectSimpleProductQuery,
+			$this->simpleProductMapper,
+			$this->selectProductVariationQuery,
+			$this->productVariationMapper,
+			$this->ids,
+			$statuses
+		);
 	}
 
 	public function all(): Domain\Products
 	{
-		$objectIds = $this->termRelationshipRepository->objectIds();
+		$selectSimpleProductQuery = $this->selectSimpleProductQuery;
+		$selectProductVariationQuery = $this->selectProductVariationQuery;
 
-		return $this->productMapper->all([
-			...$this->database->select(
-				$this->selectSimpleProductQuery
-					->withIds(...$objectIds)
-					->withStatuses(Domain\Post\Status::Publish)
+		if ($this->ids) {
+			$selectSimpleProductQuery = $selectSimpleProductQuery
+				->withIds(...$this->ids);
+			$selectProductVariationQuery = $selectProductVariationQuery
+				->withIds(...$this->ids);
+		}
 
-			),
-			...$this->database->select(
-				$this->selectVariationProductQuery
-					->withIds(...$objectIds)
-					->withStatuses(Domain\Post\Status::Publish)
-					->withParentStatuses(Domain\Post\Status::Publish)
-			),
-		]);
+		if ($this->statuses) {
+			$selectSimpleProductQuery = $selectSimpleProductQuery
+				->withStatuses(...$this->statuses);
+			$selectProductVariationQuery = $selectProductVariationQuery
+				->withStatuses(...$this->statuses)
+				->withParentStatuses(...$this->statuses);
+		}
+
+		$products = new Domain\Products();
+		$products->merge($this->simpleProductMapper->all($this->database->select($selectSimpleProductQuery)));
+		$products->merge($this->productVariationMapper->all($this->database->select($selectProductVariationQuery)));
+
+		return $products;
 	}
 }
