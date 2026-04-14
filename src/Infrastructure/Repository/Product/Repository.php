@@ -3,6 +3,7 @@
 namespace Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure\Repository\Product;
 
 use Hoo\WordPressPluginFramework\Database\DatabaseInterface;
+use Hoo\WordPressPluginFramework\Json\JsonInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure;
 
@@ -10,6 +11,7 @@ readonly class Repository implements Domain\Repository\Product\RepositoryInterfa
 {
 	public function __construct(
 		protected DatabaseInterface $database,
+		protected JsonInterface $json,
 		protected Infrastructure\Database\Query\Select\Product\Simple\Query $selectSimpleProductQuery,
 		protected Infrastructure\Mapper\Product\Simple\Mapper $simpleProductMapper,
 		protected Infrastructure\Database\Query\Select\Product\Variation\Query $selectProductVariationQuery,

@@ -2,21 +2,27 @@
 
 namespace Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure\Repository\Attribute;
 
-use Hoo\WordPressPluginFramework\Database\DatabaseInterface;
+use Hoo\WordPressPluginFramework\Database\SelectInterface;
+use Hoo\WordPressPluginFramework\Json\JsonInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure;
 
 readonly class Repository implements Domain\Repository\Attribute\RepositoryInterface
 {
 	public function __construct(
-		protected DatabaseInterface $database,
-		protected Infrastructure\Database\Query\Select\Attribute\Query $selectAttributeQuery,
+		protected SelectInterface $select,
+		protected JsonInterface $json,
+		protected Infrastructure\Database\Query\Select\Attribute\Query $attributeQuery,
 		protected Infrastructure\Mapper\Attribute\Mapper $attributeMapper,
 	) {
 	}
 
 	public function all(): Domain\Attributes
 	{
-		return $this->attributeMapper->all($this->database->json($this->selectAttributeQuery));
+		return $this->attributeMapper->map(
+			$this->json->decode(
+				($this->select)($this->attributeQuery)[0]['attributes'],
+			),
+		);
 	}
 }

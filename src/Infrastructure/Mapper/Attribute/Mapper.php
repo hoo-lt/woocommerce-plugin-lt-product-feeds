@@ -6,11 +6,11 @@ use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 
 class Mapper
 {
-	public function all(array $json): Domain\Attributes
+	public function map(array $array): Domain\Attributes
 	{
 		$attributes = new Domain\Attributes();
 
-		foreach ($json as [
+		foreach ($array as [
 			'name' => $name,
 			'slug' => $slug,
 			'terms' => $terms,
