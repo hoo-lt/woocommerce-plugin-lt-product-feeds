@@ -15,7 +15,7 @@ define('WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH', plugin_dir_path(__FILE__));
 $container = require __DIR__ . '/container.php';
 
 $database = $container->get(DatabaseInterface::class);
-$query = $container->get(Infrastructure\Database\Query\Select\Product\Simple\Query::class);
+$query = $container->get(Infrastructure\Database\Queries\Select\Product\Simple\Query::class);
 
 $rows = $database->json($query);
 

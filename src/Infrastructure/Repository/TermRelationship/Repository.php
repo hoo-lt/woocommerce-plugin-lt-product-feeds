@@ -10,7 +10,7 @@ readonly class Repository implements Domain\Repository\TermRelationship\Reposito
 {
 	public function __construct(
 		protected DatabaseInterface $database,
-		protected Infrastructure\Database\Query\Select\TermRelationship\Query $selectTermRelationshipQuery,
+		protected Infrastructure\Database\Queries\Select\TermRelationship\Query $selectTermRelationshipQuery,
 		protected Infrastructure\Mapper\TermRelationship\Mapper $termRelationshipMapper,
 	) {
 	}

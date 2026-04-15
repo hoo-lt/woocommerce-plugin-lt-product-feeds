@@ -12,7 +12,7 @@ readonly class Repository implements Domain\Repository\Attribute\RepositoryInter
 	public function __construct(
 		protected SelectInterface $select,
 		protected JsonInterface $json,
-		protected Infrastructure\Database\Query\Select\Attribute\Query $attributeQuery,
+		protected Infrastructure\Database\Queries\Select\Attribute\Query $attributeQuery,
 		protected Infrastructure\Mapper\Attribute\Mapper $attributeMapper,
 	) {
 	}

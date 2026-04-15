@@ -25,7 +25,7 @@ return [
 			'source',
 			'product-feeds'
 		),
-	WordPressPluginFramework\Middleware\VerifyNonce\Middleware::class => DI\autowire()
+	WordPressPluginFramework\Middlewares\VerifyNonce\Middleware::class => DI\autowire()
 		->constructorParameter(
 			'nonceName',
 			'product_feeds_nonce'
@@ -50,7 +50,7 @@ return [
 	Domain\Repository\Brand\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Brand\Repository::class)
 		->constructorParameter(
 			'selectTermQuery',
-			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+			DI\autowire(Infrastructure\Database\Queries\Select\Term\Query::class)
 				->constructorParameter(
 					'taxonomy',
 					Domain\Taxonomy::Brand
@@ -59,7 +59,7 @@ return [
 	Domain\Repository\Category\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Category\Repository::class)
 		->constructorParameter(
 			'selectTermQuery',
-			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+			DI\autowire(Infrastructure\Database\Queries\Select\Term\Query::class)
 				->constructorParameter(
 					'taxonomy',
 					Domain\Taxonomy::Category
@@ -69,7 +69,7 @@ return [
 	Domain\Repository\Tag\RepositoryInterface::class => DI\autowire(Infrastructure\Repository\Tag\Repository::class)
 		->constructorParameter(
 			'selectTermQuery',
-			DI\autowire(Infrastructure\Database\Query\Select\Term\Query::class)
+			DI\autowire(Infrastructure\Database\Queries\Select\Term\Query::class)
 				->constructorParameter(
 					'taxonomy',
 					Domain\Taxonomy::Tag
@@ -78,7 +78,7 @@ return [
 	Domain\Repository\TermMeta\RepositoryInterface::class => DI\get(Infrastructure\Repository\TermMeta\Repository::class),
 	Domain\Repository\TermRelationship\RepositoryInterface::class => DI\get(Infrastructure\Repository\TermRelationship\Repository::class),
 
-	Infrastructure\Database\Query\Select\TermRelationship\Query::class => DI\autowire()
+	Infrastructure\Database\Queries\Select\TermRelationship\Query::class => DI\autowire()
 		->constructorParameter(
 			'termMeta',
 			Domain\TermMeta::Excluded

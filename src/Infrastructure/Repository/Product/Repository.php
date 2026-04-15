@@ -12,9 +12,9 @@ readonly class Repository implements Domain\Repository\Product\RepositoryInterfa
 	public function __construct(
 		protected DatabaseInterface $database,
 		protected JsonInterface $json,
-		protected Infrastructure\Database\Query\Select\Product\Simple\Query $selectSimpleProductQuery,
+		protected Infrastructure\Database\Queries\Select\Product\Simple\Query $selectSimpleProductQuery,
 		protected Infrastructure\Mapper\Product\Simple\Mapper $simpleProductMapper,
-		protected Infrastructure\Database\Query\Select\Product\Variation\Query $selectProductVariationQuery,
+		protected Infrastructure\Database\Queries\Select\Product\Variation\Query $selectProductVariationQuery,
 		protected Infrastructure\Mapper\Product\Variation\Mapper $productVariationMapper,
 		protected array $ids = [],
 		protected array $statuses = [],

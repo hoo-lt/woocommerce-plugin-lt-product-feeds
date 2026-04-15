@@ -12,7 +12,7 @@ WITH RECURSIVE cte_term_taxonomy AS (
 		ON terms.term_id = term_taxonomy.term_id
 
 	WHERE term_taxonomy.parent = 0
-		AND term_taxonomy.taxonomy = %s
+		AND term_taxonomy.taxonomy = :taxonomy
 
 	UNION ALL
 

@@ -2,7 +2,7 @@
 
 namespace Hoo\WooCommercePlugin\LtProductFeeds\Infrastructure\Hook\Filter;
 
-use Hoo\WordPressPluginFramework\Middleware;
+use Hoo\WordPressPluginFramework\Middlewares;
 use Hoo\WordPressPluginFramework\Pipeline\PipelineInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Presentation;
@@ -12,6 +12,7 @@ class Hook
 {
 	public function __construct(
 		protected readonly PipelineInterface $pipeline,
+		protected readonly Middlewares\VerifyNonce\Middleware $verifyNonceMiddleware,
 		protected readonly Presentation\Presenters\Term\Presenter $termPresenter,
 	) {
 	}
@@ -74,9 +75,8 @@ class Hook
 	public function save_taxonomy(int $term_id, int $tt_id, array $args): void
 	{
 		$this->pipeline
-			->object($this->termPresenter)
-			->middlewares(
-				Middleware\VerifyNonce\Middleware::class,
+			->withMiddlewares(
+				$this->verifyNonceMiddleware,
 			)
 		(fn($termPresenter) => $termPresenter->save($term_id));
 	}

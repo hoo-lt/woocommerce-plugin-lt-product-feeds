@@ -8,8 +8,8 @@ WITH RECURSIVE cte_term_taxonomy AS (
 	JOIN :termmeta AS termmeta
 		ON termmeta.term_id = term_taxonomy.term_id
 
-	WHERE termmeta.meta_key = %s
-		AND termmeta.meta_value = %s
+	WHERE termmeta.meta_key = :termmeta_meta_key
+		AND termmeta.meta_value = :termmeta_meta_value
 
 	UNION ALL
 

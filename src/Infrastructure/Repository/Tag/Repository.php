@@ -10,7 +10,7 @@ readonly class Repository implements Domain\Repository\Tag\RepositoryInterface
 {
 	public function __construct(
 		protected DatabaseInterface $database,
-		protected Infrastructure\Database\Query\Select\Term\Query $selectTermQuery,
+		protected Infrastructure\Database\Queries\Select\Term\Query $selectTermQuery,
 		protected Infrastructure\Mapper\Tag\Mapper $tagMapper,
 	) {
 	}
