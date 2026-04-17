@@ -43,7 +43,11 @@ return [
 		),
 	WordPressPluginFramework\Pipeline\PipelineInterface::class => DI\get(WordPressPluginFramework\Pipeline\Pipeline::class),
 	WordPressPluginFramework\Router\Router::class => DI\autowire(),
-	WordPressPluginFramework\Repositories\Database\Migrator\RepositoryInterface::class => DI\get(WordPressPluginFramework\Repositories\Database\Migrator\Repository::class),
+	WordPressPluginFramework\Repositories\Database\Migrator\RepositoryInterface::class => DI\autowire(WordPressPluginFramework\Repositories\Database\Migrator\Repository::class)
+		->constructorParameter(
+			'key',
+			'lt_product_feeds_migrations',
+		),
 	WordPressPluginFramework\View\ViewInterface::class => DI\autowire(WordPressPluginFramework\View\View::class)
 		->constructorParameter(
 			'path',

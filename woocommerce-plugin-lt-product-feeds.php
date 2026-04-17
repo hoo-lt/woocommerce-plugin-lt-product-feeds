@@ -75,7 +75,14 @@ $router();
 
 register_activation_hook(__FILE__, function () use ($container) {
 	$migrator = $container->get(Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface::class);
-	$migrator->migrate();
+	$migrator->up();
+
+	flush_rewrite_rules();
+});
+
+register_deactivation_hook(__FILE__, function () use ($container) {
+	$migrator = $container->get(Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface::class);
+	$migrator->down();
 
 	flush_rewrite_rules();
 });
