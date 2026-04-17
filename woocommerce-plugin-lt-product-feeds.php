@@ -28,49 +28,58 @@ require __DIR__ . '/vendor/autoload.php';
 
 $container = require __DIR__ . '/container.php';
 
-use Hoo\WordPressPluginFramework;
+use Hoo\WordPressPluginFramework\Hook\Action\Hook as ActionHook;
+use Hoo\WordPressPluginFramework\Hook\Filter\Hook as FilterHook;
+use Hoo\WordPressPluginFramework\Hook\Activation\Hook as ActivationHook;
+use Hoo\WordPressPluginFramework\Hook\Deactivation\Hook as DeactivationHook;
+use Hoo\WordPressPluginFramework\Hooker\Hooker;
+use Hoo\WordPressPluginFramework\Pipeline\PipelineInterface;
+use Hoo\WordPressPluginFramework\Middlewares\VerifyNonce\Middleware as VerifyNonce;
+use Hoo\WordPressPluginFramework\Router\Router;
+use Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Presentation;
 
-$hooker = $container->get(WordPressPluginFramework\Hooker\Hooker::class);
-$pipeline = $container->get(WordPressPluginFramework\Pipeline\PipelineInterface::class);
-$verifyNonce = $container->get(WordPressPluginFramework\Middlewares\VerifyNonce\Middleware::class);
+$hooker = $container->get(Hooker::class);
+$router = $container->get(Router::class);
+$pipeline = $container->get(PipelineInterface::class);
+$verifyNonce = $container->get(VerifyNonce::class);
 $termPresenter = $container->get(Presentation\Presenters\Term\Presenter::class);
 
-add_action('admin_enqueue_scripts', fn() =>
-	wp_enqueue_style('product-feeds-admin', WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_URL . 'assets/css/admin.css')
-);
-
-$hooks = [];
+$hooks = [
+	new ActionHook($pipeline, 'admin_enqueue_scripts', fn() =>
+		wp_enqueue_style('product-feeds-admin', WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_URL . 'assets/css/admin.css')
+	),
+];
 
 foreach (Domain\Taxonomy::cases() as $taxonomy) {
 	$hooks = [
 		...$hooks,
 
-		new WordPressPluginFramework\Hook\FilterHook($pipeline, "manage_edit-{$taxonomy->value}_columns", fn(array $columns) =>
+		new FilterHook($pipeline, "manage_edit-{$taxonomy->value}_columns", fn(array $columns) =>
 			$columns += ['product_feeds' => esc_html__('Product feeds', 'product-feeds')]
 		),
 
-		new WordPressPluginFramework\Hook\FilterHook($pipeline, "manage_{$taxonomy->value}_custom_column", fn(string $string, string $column_name, int $term_id) =>
+		new FilterHook($pipeline, "manage_{$taxonomy->value}_custom_column", fn(string $string, string $column_name, int $term_id) =>
 			match ($column_name) {
 				'product_feeds' => $termPresenter->view($term_id),
 				default => $string,
 			}
 		),
 
-		new WordPressPluginFramework\Hook\ActionHook($pipeline, "{$taxonomy->value}_add_form_fields", fn() =>
+		new ActionHook($pipeline, "{$taxonomy->value}_add_form_fields", fn() =>
 			print $termPresenter->addView()
 		),
 
-		new WordPressPluginFramework\Hook\ActionHook($pipeline, "{$taxonomy->value}_edit_form_fields", fn(WP_Term $tag) =>
+		new ActionHook($pipeline, "{$taxonomy->value}_edit_form_fields", fn(WP_Term $tag) =>
 			print $termPresenter->editView($tag->term_id)
 		),
 
-		(new WordPressPluginFramework\Hook\ActionHook($pipeline, "created_{$taxonomy->value}", fn(int $term_id) =>
+		(new ActionHook($pipeline, "created_{$taxonomy->value}", fn(int $term_id) =>
 			$termPresenter->save($term_id)
 		))->withMiddlewares($verifyNonce),
 
-		(new WordPressPluginFramework\Hook\ActionHook($pipeline, "edited_{$taxonomy->value}", fn(int $term_id) =>
+		(new ActionHook($pipeline, "edited_{$taxonomy->value}", fn(int $term_id) =>
 			$termPresenter->save($term_id)
 		))->withMiddlewares($verifyNonce),
 	];
@@ -79,19 +88,16 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 $hooker = $hooker->withHooks(
 	...$hooks,
 
-	new WordPressPluginFramework\Hook\ActivationHook($pipeline, __FILE__, function () use ($container) {
-		$migrator = $container->get(Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface::class);
-		$migrator->up();
-
-		flush_rewrite_rules();
+	new ActivationHook($pipeline, __FILE__, function () use ($container, $router) {
+		$container->get(MigratorInterface::class)->up();
+		$router->up();
 	}),
 
-	new WordPressPluginFramework\Hook\DeactivationHook($pipeline, __FILE__, function () use ($container) {
-		$migrator = $container->get(Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface::class);
-		$migrator->down();
-
-		flush_rewrite_rules();
+	new DeactivationHook($pipeline, __FILE__, function () use ($container, $router) {
+		$container->get(MigratorInterface::class)->down();
+		$router->down();
 	}),
 );
 
 $hooker();
+$router();
