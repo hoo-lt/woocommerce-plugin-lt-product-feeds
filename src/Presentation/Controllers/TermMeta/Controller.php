@@ -2,15 +2,13 @@
 
 namespace Hoo\WooCommercePlugin\LtProductFeeds\Presentation\Controllers\TermMeta;
 
-use Hoo\WordPressPluginFramework\Http\RequestInterface;
-use Hoo\WordPressPluginFramework\View\ViewInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Presentation;
+use Hoo\WordPressPluginFramework\View\ViewInterface;
 
 readonly class Controller
 {
 	public function __construct(
-		protected RequestInterface $request,
 		protected ViewInterface $view,
 		protected Presentation\Mapper\TermMeta\Mapper $termMetaMapper,
 		protected Domain\Repository\TermMeta\RepositoryInterface $termMetaRepository,
@@ -53,13 +51,5 @@ readonly class Controller
 				$this->termMetaMapper->options(),
 			)
 		('term-meta.edit');
-	}
-
-	public function set(int $id): void
-	{
-		$value = $this->request->post(Domain\TermMeta::KEY);
-		if ($value) {
-			$this->termMetaRepository->set($id, Domain\TermMeta::from($value));
-		}
 	}
 }

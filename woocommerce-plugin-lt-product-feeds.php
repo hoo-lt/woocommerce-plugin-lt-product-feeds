@@ -30,7 +30,7 @@ $container = require __DIR__ . '/container.php';
 
 use Hoo\WordPressPluginFramework\Hook\HookFactoryInterface;
 use Hoo\WordPressPluginFramework\Hooker\HookerInterface;
-use Hoo\WordPressPluginFramework\Middlewares\VerifyNonce\Middleware as VerifyNonce;
+use Hoo\WordPressPluginFramework\Pipeline\Middlewares;
 use Hoo\WordPressPluginFramework\Router\RouterInterface;
 use Hoo\WordPressPluginFramework\Database\Migrator\MigratorInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
@@ -40,8 +40,9 @@ $hooker = $container->get(HookerInterface::class);
 $router = $container->get(RouterInterface::class);
 $hookFactory = $container->get(HookFactoryInterface::class);
 $migrator = $container->get(MigratorInterface::class);
-$verifyNonce = $container->get(VerifyNonce::class);
+$verifyNonce = $container->autowire(Middlewares\VerifyNonce\Middleware::class);
 $termMetaController = $container->get(Presentation\Controllers\TermMeta\Controller::class);
+$termMetaPostAction = $container->get(Presentation\Actions\TermMeta\Post\Action::class);
 
 $hooks = [
 	$hookFactory->activation(__FILE__, function () use ($migrator, $router) {
@@ -66,7 +67,9 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 
 		$hookFactory->filter(
 			"manage_edit-{$taxonomy->value}_columns",
-			fn(array $columns) => $columns += ['product_feeds' => esc_html__('Product feeds', 'product-feeds')]
+			fn(array $columns) => $columns += [
+				'product_feeds' => esc_html__('Product feeds', 'product-feeds')
+			]
 		),
 
 		$hookFactory->filter(
@@ -80,22 +83,62 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 		$hookFactory->action(
 			"{$taxonomy->value}_add_form_fields",
 			fn() => print $termMetaController->add()
-		),
+		)
+			->withMiddlewares(
+				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
+					->constructorParameter(
+						'capability',
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+					)
+					->catch(fn() => ''),
+			),
 
 		$hookFactory->action(
 			"{$taxonomy->value}_edit_form_fields",
 			fn(WP_Term $tag) => print $termMetaController->edit($tag->term_id)
-		),
+		)
+			->withMiddlewares(
+				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
+					->constructorParameter(
+						'capability',
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+					)
+					->catch(fn() => ''),
+			),
 
 		$hookFactory->action(
 			"created_{$taxonomy->value}",
-			fn(int $term_id) => $termMetaController->set($term_id)
-		)->withMiddlewares($verifyNonce),
+			fn(int $term_id) => $termMetaPostAction($term_id)
+		)
+			->withMiddlewares(
+				$container->autowire(Middlewares\VerifyNonce\Middleware::class)
+					->constructorParameter(
+						'action',
+						'term_meta_controller_add',
+					),
+				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
+					->constructorParameter(
+						'capability',
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+					),
+			),
 
 		$hookFactory->action(
 			"edited_{$taxonomy->value}",
-			fn(int $term_id) => $termMetaController->set($term_id)
-		)->withMiddlewares($verifyNonce),
+			fn(int $term_id) => $termMetaPostAction($term_id)
+		)
+			->withMiddlewares(
+				$container->autowire(Middlewares\VerifyNonce\Middleware::class)
+					->constructorParameter(
+						'action',
+						'term_meta_controller_edit',
+					),
+				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
+					->constructorParameter(
+						'capability',
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+					),
+			),
 	];
 }
 
