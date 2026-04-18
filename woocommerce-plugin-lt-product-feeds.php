@@ -28,7 +28,7 @@ require __DIR__ . '/vendor/autoload.php';
 
 $container = require __DIR__ . '/container.php';
 
-use Hoo\WordPressPluginFramework\Hook\HookFactoryInterface;
+use Hoo\WordPressPluginFramework\Hooker\Hooks\HookFactoryInterface;
 use Hoo\WordPressPluginFramework\Hooker\HookerInterface;
 use Hoo\WordPressPluginFramework\Pipeline\Middlewares;
 use Hoo\WordPressPluginFramework\Router\RouterInterface;
@@ -40,7 +40,6 @@ $hooker = $container->get(HookerInterface::class);
 $router = $container->get(RouterInterface::class);
 $hookFactory = $container->get(HookFactoryInterface::class);
 $migrator = $container->get(MigratorInterface::class);
-$verifyNonce = $container->autowire(Middlewares\VerifyNonce\Middleware::class);
 $termMetaController = $container->get(Presentation\Controllers\TermMeta\Controller::class);
 
 $hooks = [
