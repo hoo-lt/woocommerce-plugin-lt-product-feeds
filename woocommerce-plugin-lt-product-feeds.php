@@ -88,7 +88,7 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
 					->constructorParameter(
 						'capability',
-						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
 					)
 					->catch(fn() => ''),
 			),
@@ -101,7 +101,7 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
 					->constructorParameter(
 						'capability',
-						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
 					)
 					->catch(fn() => ''),
 			),
@@ -119,7 +119,7 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
 					->constructorParameter(
 						'capability',
-						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
 					),
 			),
 
@@ -136,7 +136,7 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 				$container->autowire(Middlewares\CurrentUserCan\Middleware::class)
 					->constructorParameter(
 						'capability',
-						Middlewares\CurrentUserCan\Capability\Capability::ManageWoocommerce,
+						Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
 					),
 			),
 	];
