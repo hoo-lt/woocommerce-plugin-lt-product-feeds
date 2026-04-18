@@ -41,7 +41,7 @@ $router = $container->get(RouterInterface::class);
 $hookFactory = $container->get(HookFactoryInterface::class);
 $migrator = $container->get(MigratorInterface::class);
 $verifyNonce = $container->get(VerifyNonce::class);
-$termPresenter = $container->get(Presentation\Presenters\Term\Presenter::class);
+$termMetaController = $container->get(Presentation\Controllers\TermMeta\Controller::class);
 
 $hooks = [
 	$hookFactory->activation(__FILE__, function () use ($migrator, $router) {
@@ -72,29 +72,29 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 		$hookFactory->filter(
 			"manage_{$taxonomy->value}_custom_column",
 			fn(string $string, string $column_name, int $term_id) => match ($column_name) {
-				'product_feeds' => $termPresenter->view($term_id),
+				'product_feeds' => $termMetaController->index($term_id),
 				default => $string,
 			}
 		),
 
 		$hookFactory->action(
 			"{$taxonomy->value}_add_form_fields",
-			fn() => print $termPresenter->addView()
+			fn() => print $termMetaController->add()
 		),
 
 		$hookFactory->action(
 			"{$taxonomy->value}_edit_form_fields",
-			fn(WP_Term $tag) => print $termPresenter->editView($tag->term_id)
+			fn(WP_Term $tag) => print $termMetaController->edit($tag->term_id)
 		),
 
 		$hookFactory->action(
 			"created_{$taxonomy->value}",
-			fn(int $term_id) => $termPresenter->save($term_id)
+			fn(int $term_id) => $termMetaController->set($term_id)
 		)->withMiddlewares($verifyNonce),
 
 		$hookFactory->action(
 			"edited_{$taxonomy->value}",
-			fn(int $term_id) => $termPresenter->save($term_id)
+			fn(int $term_id) => $termMetaController->set($term_id)
 		)->withMiddlewares($verifyNonce),
 	];
 }

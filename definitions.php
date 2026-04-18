@@ -54,7 +54,7 @@ return [
 	WordPressPluginFramework\View\ViewInterface::class => DI\autowire(WordPressPluginFramework\View\View::class)
 		->constructorParameter(
 			'path',
-			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH . '/src/Presentation/Views',
+			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH . '/views',
 		),
 
 		/**

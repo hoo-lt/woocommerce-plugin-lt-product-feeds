@@ -1,13 +1,13 @@
 <?php
 
-namespace Hoo\WooCommercePlugin\LtProductFeeds\Presentation\Presenters\Term;
+namespace Hoo\WooCommercePlugin\LtProductFeeds\Presentation\Controllers\TermMeta;
 
 use Hoo\WordPressPluginFramework\Http\RequestInterface;
 use Hoo\WordPressPluginFramework\View\ViewInterface;
 use Hoo\WooCommercePlugin\LtProductFeeds\Domain;
 use Hoo\WooCommercePlugin\LtProductFeeds\Presentation;
 
-class Presenter
+class Controller
 {
 	public function __construct(
 		protected readonly RequestInterface $request,
@@ -17,25 +17,25 @@ class Presenter
 	) {
 	}
 
-	public function view(int $id): string
+	public function index(int $id): string
 	{
-		return ($this->view)('/Term', [
+		return ($this->view)('term-meta.index', [
 			'icon' => $this->termMetaMapper->icon(
 				$this->termMetaRepository->get($id)
 			),
 		]);
 	}
 
-	public function addView(): string
+	public function add(): string
 	{
-		return ($this->view)('/Term/Add', [
+		return ($this->view)('term-meta.add', [
 			'options' => $this->termMetaMapper->options()
 		]);
 	}
 
-	public function editView(int $id): string
+	public function edit(int $id): string
 	{
-		return ($this->view)('/Term/Edit', [
+		return ($this->view)('term-meta.edit', [
 			'selected' => $this->termMetaMapper->option(
 				$this->termMetaRepository->get($id)
 			),
@@ -43,13 +43,11 @@ class Presenter
 		]);
 	}
 
-	public function save(int $id): void
+	public function set(int $id): void
 	{
 		$value = $this->request->post(Domain\TermMeta::KEY);
 		if ($value) {
 			$this->termMetaRepository->set($id, Domain\TermMeta::from($value));
-		} else {
-			//$this->termMetaRepository->delete?
 		}
 	}
 }
