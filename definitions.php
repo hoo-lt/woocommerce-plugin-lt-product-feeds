@@ -18,7 +18,7 @@ return [
 	WordPressPluginFramework\Database\Migrator\MigratorInterface::class => DI\autowire(WordPressPluginFramework\Database\Migrator\Migrator::class)
 		->constructorParameter(
 			'path',
-			__DIR__ . '/src/Infrastructure/Database/Migrations',
+			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH,
 		),
 	WordPressPluginFramework\Database\Table\TableInterface::class => DI\autowire(WordPressPluginFramework\Database\Table\Table::class)
 		->constructorParameter(
@@ -54,7 +54,7 @@ return [
 	WordPressPluginFramework\View\ViewInterface::class => DI\autowire(WordPressPluginFramework\View\View::class)
 		->constructorParameter(
 			'path',
-			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH . '/views',
+			WOOCOMMERCE_PRODUCT_FEEDS_PLUGIN_PATH,
 		),
 
 		/**

@@ -19,28 +19,40 @@ class Controller
 
 	public function index(int $id): string
 	{
-		return ($this->view)('term-meta.index', [
-			'icon' => $this->termMetaMapper->icon(
-				$this->termMetaRepository->get($id)
-			),
-		]);
+		return $this->view
+			->withValue(
+				'icon',
+				$this->termMetaMapper->icon(
+					$this->termMetaRepository->get($id)
+				),
+			)
+		('term-meta.index');
 	}
 
 	public function add(): string
 	{
-		return ($this->view)('term-meta.add', [
-			'options' => $this->termMetaMapper->options()
-		]);
+		return $this->view
+			->withValue(
+				'options',
+				$this->termMetaMapper->options(),
+			)
+		('term-meta.add');
 	}
 
 	public function edit(int $id): string
 	{
-		return ($this->view)('term-meta.edit', [
-			'selected' => $this->termMetaMapper->option(
-				$this->termMetaRepository->get($id)
-			),
-			'options' => $this->termMetaMapper->options()
-		]);
+		return $this->view
+			->withValue(
+				'selected',
+				$this->termMetaMapper->option(
+					$this->termMetaRepository->get($id)
+				),
+			)
+			->withValue(
+				'options',
+				$this->termMetaMapper->options(),
+			)
+		('term-meta.edit');
 	}
 
 	public function set(int $id): void
