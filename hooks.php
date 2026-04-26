@@ -2,7 +2,7 @@
 
 use Hoo\WordPressPluginFramework\{
 	Database,
-	Hooker,
+	Hooker, Http\Request\RequestInterface,
 	Pipeline,
 	Router,
 };
@@ -86,36 +86,31 @@ foreach (Domain\Taxonomy::cases() as $taxonomy) {
 			fn(int $term_id) => $termMetaController->post($term_id)
 		)
 			->withMiddlewares(
-				$verifyNonceMiddleware
-					->constructorParameter(
-						'action',
-						'term_meta_controller_add',
-					),
-				$currentUserCanMiddleware
-					->constructorParameter(
-						'capability',
-						Pipeline\Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
-					),
-				$validateRequestMiddleware
+				(new Pipeline\Middlewares\VerifyNonce\Middleware(
+					'term_meta_controller_edit',
+					'term_meta_controller_edit',
+				)),
+				(new Pipeline\Middlewares\CurrentUserCan\Middleware(
+					Pipeline\Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce
+				)),
+				(new Pipeline\Middlewares\ValidateRequest\Middleware())
 					->body(Domain\TermMeta::KEY)->string(),
 			),
 
 		$hookFactory->action(
 			"edited_{$taxonomy->value}",
-			fn(int $term_id) => $termMetaController->post($term_id)
+			fn(?RequestInterface $request, int $term_id) => $termMetaController->post($request, $term_id)
 		)
 			->withMiddlewares(
-				$verifyNonceMiddleware
-					->constructorParameter(
-						'action',
-						'term_meta_controller_edit',
-					),
-				$currentUserCanMiddleware
-					->constructorParameter(
-						'capability',
-						Pipeline\Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce,
-					),
-				$validateRequestMiddleware
+				(new Pipeline\Middlewares\VerifyNonce\Middleware(
+					'term_meta_controller_edit',
+					'term_meta_controller_edit',
+				)),
+				(new Pipeline\Middlewares\CurrentUserCan\Middleware(
+					Pipeline\Middlewares\CurrentUserCan\Capability\Capability::ManageWooCommerce
+				)),
+				(new Pipeline\Middlewares\ValidateRequest\Middleware())
+					->query('k')->int()
 					->body(Domain\TermMeta::KEY)->string(),
 			),
 	];
